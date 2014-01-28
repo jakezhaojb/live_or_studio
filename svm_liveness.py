@@ -1,6 +1,6 @@
-#	This project aims at a classification problem - live and studio.
-#   We simply adopt LIBSVM in this script, with a module of chasing the best parameters.
-#	Designed by Junbo Zhao, at Douban Inc., 1/16/2014
+# This project aims at a classification problem - live and studio.
+# We simply adopt LIBSVM in this script, with a module of chasing the best parameters.
+# Designed by Junbo Zhao, at Douban Inc., 1/16/2014
 
 import numpy as np
 import random

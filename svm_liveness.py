@@ -1,14 +1,12 @@
-#	This project aims at experiments on Weighted LIBSVM Training.
-#	It is designed for a classification problem - live and studio.
-#	The two versions of music are apparently formed a unbalanced dataset, in which live << studio.
-#	This project will compare the results of un-weighted lib-SVM and weighted one.
-#	Designed by Junbo Zhao, in Douban Inc. 1/16/2014
+#	This project aims at a classification problem - live and studio.
+#   We simply adopt LIBSVM in this script, with a module of chasing the best parameters.
+#	Designed by Junbo Zhao, at Douban Inc., 1/16/2014
 
 import numpy as np
 import random
 import os
 import sys
-sys.path.append('/mfs/user/panmiaocai/misc/libsvm-3.17/python')
+sys.path.append(r'../libsvm-3.17/python')
 from dpark import DparkContext
 from svmutil import *
 
@@ -24,14 +22,14 @@ def find(self,value):
             ind.append(i)
     return ind
 
-## number of training and testing datasets
-#if len(sys.argv)!=3:
-#	print "Wrong input, you should indicate your training and testing sample numbers"
-#	sys.exit(0)
-#else:
-#	num_train = int(sys.argv[1])
-#	num_test = int(sys.argv[2])
-#
+# number of training and testing datasets
+if len(sys.argv)!=3:
+	print "Wrong input, you should indicate your training and testing sample numbers"
+	sys.exit(0)
+else:
+	num_train = int(sys.argv[1])
+	num_test = int(sys.argv[2])
+
 
 def main(argv):
     # Loading the dataset
@@ -39,14 +37,14 @@ def main(argv):
     y, x = data
     del data
 
-    num_train = 990
-    num_test = 900
+#    num_train = 990
+#    num_test = 900
 
     # Preparing training and testing data
     if len(x) != len(y):
-        print("Please examine the data set, for the labels and features are not accord!")
+        print("Please examine the data set, for the labels and features are not accorded!")
         sys.exit()
-
+    # generating random training and testing set, to yield the ability of classifier more accurately.
     x_live = [x[i] for i in find(y, 1.0)]
     x_stu = [x[i] for i in find(y, 0.0)]
     n_live = len(x_live)
@@ -61,8 +59,8 @@ def main(argv):
     x_tr = [x_live[i] for i in ind_live[:num_train]] + [x_stu[i] for i in ind_stu[:num_train]]
     y_tr = [1.0]*num_train + [-1.0]*num_train
 
-    # svm and 10-fold cross validation choosing the best parameters
-    # w is in a para-grid!
+    # SVM and a 10-fold Cross Validation chasing the best parameters.
+    # gamma and c_reg are constructing a parameter grid!
     # Now we focus on the parameters.
     # gamma, c, -v
     

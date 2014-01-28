@@ -1,10 +1,11 @@
-# This project is designed for experimenting Examplar-SVM ensembled model on the liveness problem.
+# This project is designed for experimenting an Ensembled Examplar-SVM model on the liveness problem.
+# We will train a large amount of Examplar SVMs, representing both versions of "live and studio".
 # Written by Junbo Zhao, at Douban Inc., 1/20/2014
-
-# THIS VERSION IS BASED ON DPARK SYSTEM!!!!    
+# This model is highly compatible with paralized systems, like hadoop, spark and dpark.
+# dpark is much prefered.
 
 import sys
-sys.path.append('/mfs/user/panmiaocai/misc/libsvm-3.17/python')
+sys.path.append('../libsvm-3.17/python')
 import random
 import numpy as np
 import matplotlib.pyplot as plt
@@ -49,8 +50,8 @@ def main(argv):
     dpark = DparkContext()
 
     # number of the training and testing set
-    num_train =  990
-    num_test = 900
+    num_train =  6000
+    num_test = 6000
 
     # Loading the dataset
     data = svm_read_problem('echo_liveness.01.libsvm')
@@ -130,11 +131,11 @@ def main(argv):
     val = np.delete(val,0,1)
     print 'val.shape =', val.shape
     '''
+    
     # KNN
     k = num_train/8
-    #val.sort(axis=1)    # This gets no indexes...
     sorted_index = val.argsort(axis = 1)
-    sorted_index = sorted_index.T[::-1].T    # why?...[::-1] can reverse the np.ndarray
+    sorted_index = sorted_index.T[::-1].T
     p_label = []
     for index in sorted_index:
         nearest_samples = []

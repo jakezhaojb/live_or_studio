@@ -1,8 +1,13 @@
-# This project is designed for experimenting an Ensembled Examplar-SVM model on the liveness problem.
-# We will train a large amount of Examplar SVMs, representing both versions of "live and studio".
+# This project is designed for experimenting an Ensambled Examplar-SVM model 
+# on the liveness problem. We will train a large amount of Examplar SVMs, 
+# representing music of both versions, "live" and "studio".
+
 # Written by Junbo Zhao, at Douban Inc., 1/20/2014
-# This model is highly compatible with paralized systems, like hadoop, spark and dpark.
-# dpark is much prefered.
+# This model is highly compatible with paralized systems. 
+# Thus it is recommendaed to use some tools like hadoop, spark and dpark.
+# In this python based project, dpark is much prefered.
+
+##======================================================================
 
 import sys
 sys.path.append('../libsvm-3.17/python')

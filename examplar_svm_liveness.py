@@ -159,7 +159,7 @@ def main(argv):
     # evaluation
     rate, pos_rate, neg_rate = evaluation(y_te, p_label)
 
-    print("The Examplar SVM framework achieves a precision of %f" %rate)
+    print("The Examplar SVM framework achieves a precision of %f" % rate)
 
 
 if __name__ == '__main__':

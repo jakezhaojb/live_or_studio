@@ -1,7 +1,8 @@
 # This project aims at a classification problem - live and studio.
-# We simply adopt LIBSVM in this script, with a module of chasing the best parameters.
+# We simply adopt LIBSVM in this script, with a part of choosing the best parameters.
 # Designed by Junbo Zhao, at Douban Inc., 1/16/2014
 
+##===================================================================================
 import numpy as np
 import random
 import os
@@ -37,8 +38,8 @@ def main(argv):
     y, x = data
     del data
 
-#    num_train = 990
-#    num_test = 900
+    num_train = 6000
+    num_test = 6000
 
     # Preparing training and testing data
     if len(x) != len(y):
@@ -54,15 +55,16 @@ def main(argv):
     random.shuffle(ind_live)
     random.shuffle(ind_stu)
 
-    x_te = [x_live[i] for i in ind_live[num_train:num_test+num_train]] + [x_stu[i] for i in ind_stu[num_train:num_test+num_train]]
-    y_te = [1.0]*len(ind_live[num_train:num_test+num_train]) + [-1.0]*len(ind_stu[num_train:num_test+num_train])
-    x_tr = [x_live[i] for i in ind_live[:num_train]] + [x_stu[i] for i in ind_stu[:num_train]]
+    x_te = [x_live[i] for i in ind_live[num_train : num_test + num_train]] + \
+        [x_stu[i] for i in ind_stu[num_train : num_test + num_train]]
+    y_te = [1.0] * len(ind_live[num_train : num_test + num_train]) + \
+        [-1.0]*len(ind_stu[num_train : num_test + num_train])
+    x_tr = [x_live[i] for i in ind_live[:num_train]] + \
+        [x_stu[i] for i in ind_stu[:num_train]]
     y_tr = [1.0]*num_train + [-1.0]*num_train
 
-    # SVM and a 10-fold Cross Validation chasing the best parameters.
-    # gamma and c_reg are constructing a parameter grid!
-    # Now we focus on the parameters.
-    # gamma, c, -v
+    # SVM and a 10-fold Cross Validation choosing the best parameters.
+    # gamma and c_reg are constructed in a parameter grid
     
     # for-loop version
     '''
@@ -85,15 +87,15 @@ def main(argv):
 
     # dpark version
     dpark = DparkContext()
-    gamma = np.arange(.01,5,.08)
-    c_reg = np.arange(.01,5,.08)
+    gamma = np.arange(.01, 5, .08)
+    c_reg = np.arange(.01, 5, .08)
     opt = []
     for g in gamma:
         for c in c_reg:
             opt.append('-g '+ str(g) +' -c ' + str(c) + ' -v 10 -q')
 
     def map_iter(i):
-        pre = svm_train(y_tr,list(x_tr),opt[i])
+        pre = svm_train(y_tr, list(x_tr), opt[i])
         return pre
 
     #pres = dpark.makeRDD(range(len(opt)),100).map(map_iter).collect()
@@ -102,11 +104,12 @@ def main(argv):
     best_opt_ind = pres.argsort()
     best_opt = opt[best_opt_ind[-1]]
 
-    best_opt = best_opt[:best_opt.find('-v')-1]
+    best_opt = best_opt[:best_opt.find('-v') - 1]
     m = svm_train(y_tr, x_tr, best_opt)
     p_label, p_acc, p_val = svm_predict(y_te, x_te, m, '-q')
 
-    print 'This solely SVM framework achieves a precision of %f' %p_acc[0]
+    print 'This SVM framework precision: %f' % p_acc[0]
+
 
 if __name__ == '__main__':
     main(sys.argv)

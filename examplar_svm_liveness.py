@@ -14,7 +14,7 @@ from svmutil import svm_read_problem, svm_train, svm_predict
 
  
 def evaluation(test_la, pred_la):
-    [FN, FP, TN, TP] = ['FN','FP', 'TN', 'TP']
+    [FN, FP, TN, TP] = ['FN', 'FP', 'TN', 'TP']
     cnt = {FN: 0, FP: 0, TN: 0, TP: 0}
     for (t_la, p_la) in zip(test_la, pred_la):
         if t_la == p_la:
@@ -32,7 +32,7 @@ def evaluation(test_la, pred_la):
     rate = (pos_rate + neg_rate) / 2.0
     return rate, pos_rate, neg_rate
 
- 
+
 def find(self, value):
     if not isinstance(self, (np.ndarray, list)):
         print("Wrong input parameters")
@@ -50,7 +50,7 @@ def main(argv):
     dpark = DparkContext()
 
     # number of the training and testing set
-    num_train =  6000
+    num_train = 6000
     num_test = 6000
 
     # Loading the dataset
@@ -65,15 +65,18 @@ def main(argv):
     x_live = [x[i] for i in find(y, 1.0)]
     x_stu = [x[i] for i in find(y, 0.0)]
     n_live = len(x_live)
-    n_stu =  len(x_stu)
+    n_stu = len(x_stu)
     ind_live = range(n_live)
     ind_stu = range(n_stu)
     random.shuffle(ind_live)
     random.shuffle(ind_stu)
 
-    x_te = [x_live[i] for i in ind_live[num_train:num_test+num_train]] + [x_stu[i] for i in ind_stu[num_train:num_test+num_train]]
-    y_te = [1.0]*len(ind_live[num_train:num_test+num_train]) + [-1.0]*len(ind_stu[num_train:num_test+num_train])
-    x_tr = [x_live[i] for i in ind_live[:num_train]] + [x_stu[i] for i in ind_stu[:num_train]]
+    x_te = [x_live[i] for i in ind_live[num_train : num_test + num_train]] + \
+        [x_stu[i] for i in ind_stu[num_train : num_test + num_train]]
+    y_te = [1.0] * len(ind_live[num_train : num_test + num_train]) + \
+        [-1.0]*len(ind_stu[num_train : num_test + num_train])
+    x_tr = [x_live[i] for i in ind_live[:num_train]] + \
+        [x_stu[i] for i in ind_stu[:num_train]]
     y_tr = [1.0]*num_train + [-1.0]*num_train
 
     # dpark version
@@ -129,20 +132,21 @@ def main(argv):
     if val.shape[1] != len(y_tr) + 1:
         print "Chaos!"
     val = np.delete(val,0,1)
-    print 'val.shape =', val.shape
+    print 'val.shape =', val.shape
     '''
     
     # KNN
-    k = num_train/8
-    sorted_index = val.argsort(axis = 1)
+    k = num_train / 8
+    sorted_index = val.argsort(axis=1)
     sorted_index = sorted_index.T[::-1].T
     p_label = []
     for index in sorted_index:
         nearest_samples = []
         for sample_index in index[:k]:
             nearest_samples.append(y_tr[sample_index])
-        n,bins,dummy = plt.hist(nearest_samples, 2, normed=1, facecolor = 'r', alpha=0.75)
-        if n[0]>n[1]:
+        n,bins,dummy = plt.hist(nearest_samples, 2, normed=1, 
+                                facecolor='r', alpha=0.75)
+        if n[0] > n[1]:
             p_label.append(-1.0)
         else:
             p_label.append(1.0)
